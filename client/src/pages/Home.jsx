@@ -4,22 +4,25 @@ import Card from "../components/Card";
 import Search from "../components/Search";
 import Sort from "../components/Sort";
 import { useState } from "react";
+import { useDebounce } from "@uidotdev/usehooks";
 
 const Home = () => {
   // arama state
   const [searchTerm, setSearchTerm] = useState("");
+  const debouncedTerm=useDebounce(searchTerm,500)
+
  // sıralama 
   const [order, setOrder] = useState(null);
 
   // api a gönderilecek parametlereler
   const params = {
     order,
-    search:searchTerm,
+    search:debouncedTerm,
   };
 
   // api den tarif verilerini al
   const { isLoading, error, data } = useQuery({
-    queryKey: ["recipes",order,searchTerm],
+    queryKey: ["recipes",order,debouncedTerm],
     queryFn: () =>
       api
       .get("/api/v1/recipes",{params})
